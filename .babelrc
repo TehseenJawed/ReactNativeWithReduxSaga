@@ -1,0 +1,22 @@
+{
+    "presets": [
+    "module:metro-react-native-babel-preset",
+    // "module:react-native-dotenv"
+    ]
+    // "presets": ["@babel/preset-env", "@babel/preset-react"]
+
+}
+
+// {
+//   "presets": [
+//     "@babel/preset-env",
+//     "@babel/preset-react",
+//     "@babel/preset-typescript",
+//     "module:metro-react-native-babel-preset",
+//   ],
+//   "plugins": [
+//     ["@babel/plugin-transform-runtime", {
+//       "corejs": 3
+//     }]
+//   ]
+// }
