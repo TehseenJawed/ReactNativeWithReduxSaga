@@ -91,4 +91,35 @@ export const globalStyles = StyleSheet.create({
 
     elevation: 6,
   },
+  cardContainer: {
+    backgroundColor: '#fff',
+    paddingVertical: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 9,
+  },
+  cardText: {
+    fontSize: wp(6),
+    color: 'black',
+    fontWeight: '600',
+  },
+  boxShadow: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
 });
