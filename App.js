@@ -6,7 +6,6 @@
  */
 
 import React from 'react';
-import type { PropsWithChildren } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -19,8 +18,11 @@ import Router from './src/navigation/router';
 import { globalStyles } from './src/styles/globalStyles';
 import { Provider } from 'react-redux';
 import store from './src/redux/store';
+import persistStore from 'redux-persist/es/persistStore';
+import { PersistGate } from 'redux-persist/integration/react';
 
-function App(): JSX.Element {
+const persisitor = persistStore(store)
+function App(){
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -34,9 +36,11 @@ function App(): JSX.Element {
         backgroundColor={backgroundStyle.backgroundColor}
       />
       <Provider store={store}>
-        <View style={globalStyles.rootContainer}>
-          <Router />
-        </View>
+        <PersistGate persistor={persisitor}>
+          <View style={globalStyles.rootContainer}>
+            <Router />
+          </View>
+        </PersistGate>
       </Provider>
     </SafeAreaView>
   );
