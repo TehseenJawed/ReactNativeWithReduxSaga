@@ -2,6 +2,7 @@ import React from 'react';
 import {Text, View} from 'react-native';
 import ProductCard from '../../components/ProductCard';
 import ProductImage from '../../assets/images/product_image.png';
+import Modal from '../../components/Modal';
 
 const Home = () => {
   const newObj = [
@@ -16,6 +17,7 @@ const Home = () => {
   return (
     <View>
       <ProductCard data={newObj[0]} />
+      <Modal />
       <Text>Home</Text>
     </View>
   );

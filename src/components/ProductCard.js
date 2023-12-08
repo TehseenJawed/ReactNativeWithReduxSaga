@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -8,6 +15,8 @@ import {WHITE, BLACK} from '../assets/colors/colors';
 import CartIcon from '../assets/icons/cart_icon.svg';
 import ProductImage from '../assets/images/product_image.png';
 import HeartNull from '../assets/icons/heart_null.svg';
+import PlusIcon from '../assets/icons/plus.svg'
+import MinusIcon from '../assets/icons/minus.svg'
 
 const ProductCard = ({data}) => {
   return (
@@ -48,9 +57,24 @@ const ProductCard = ({data}) => {
               </View>
             </View>
           </View>
-          <TouchableOpacity style={styles.productCart1}>
+          <View style={styles.increamentContainer}>
+            <TouchableOpacity style={styles.increamentItem}>
+              <PlusIcon width={10} height={10}/>
+            </TouchableOpacity>
+            <TextInput
+              style={styles.inputField}
+              // onChangeText={setEmail}
+              value={'1'}
+              placeholder="Email"
+              keyboardType="email-address"
+            />
+            <TouchableOpacity style={styles.increamentItem}>
+              <MinusIcon width={10} height={10}/>
+            </TouchableOpacity>
+          </View>
+          {/* <TouchableOpacity style={styles.productCart1}>
             <CartIcon />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
     </View>
@@ -62,6 +86,26 @@ const styles = StyleSheet.create({
     width: wp('45%'),
     position: 'relative',
     // height: hp(20),
+  },
+  inputField: {
+    backgroundColor: WHITE,
+    width: 25,
+    height: 25,
+    fontSize: 15,
+    borderRadius: 5,
+    padding: 0,
+    textAlign: 'center'
+  },
+  increamentItem: {
+    backgroundColor: BLACK,
+    width: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 20
+  },
+  operatorIcon: {
+    color: WHITE,
+    fontSize: 17,
   },
   heartColor: {
     position: 'absolute',
@@ -107,7 +151,7 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   colorLeft: {
-    color: WHITE
+    color: WHITE,
   },
   productImage: {
     width: '100%',
@@ -171,6 +215,12 @@ const styles = StyleSheet.create({
   },
   productCart1: {
     width: wp(10),
+  },
+  increamentContainer: {
+    width: wp(10),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 export default ProductCard;
