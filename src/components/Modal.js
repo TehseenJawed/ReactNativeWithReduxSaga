@@ -8,6 +8,7 @@ import {
   View,
   Image,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -19,31 +20,30 @@ import DetailsIcon from '../assets/icons/grayIcon.svg';
 import HeartNull from '../assets/icons/heart_null.svg';
 import Button from './Button';
 
-const CustomModal = () => {
-  const [modalVisible, setModalVisible] = useState(true);
-  const imageArray = [
-    '../assets/images/girl_modal_p1.png',
-    '../assets/images/girl_modal_p2.png',
-  ];
+const CustomModal = ({modalProps}) => {
+  const [modalOpen, setModalOpen] = modalProps;
+  const [size, setSize] = useState('S');
+  const [color, setColor] = useState('#CEBFB8');
+  const imageArray = ['../assets/images/girl_modal_p1.png'];
+  console.log('44444', modalOpen?.product);
   const renderImagesJSX = data => {
-    console.log(data.index);
-    const index = data.index || 0
-    return(
-        <Image
-          style={styles.tinyLogo}
-          source={require( `../assets/images/girl_modal_p${1}.png`)}
-        />
-      )
+    let imgSource = null;
+    if (!!data?.item?.uri) {
+      imgSource = data.item.uri;
+    }
+    return <Image style={styles.productImage} source={imgSource} />;
   };
+  const currentPrice = modalOpen?.product?.currentPrice?.split('.') || [];
+  // const oldPrice = modalOpen?.product?.oldPrice.split('.');
   return (
     <View style={styles.centeredView}>
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
+        visible={modalOpen?.flag}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
+          setModalOpen({flag: !modalOpen?.flag, product: {}});
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalEmpty}></View>
@@ -52,18 +52,19 @@ const CustomModal = () => {
               <Text style={styles.modalHeaderText}>
                 Choose the color and size.
               </Text>
-              <Pressable style={styles.cross}>
+              <Pressable
+                onPress={() => setModalOpen({flag: false, product: {}})}
+                style={styles.cross}>
                 <Cross />
               </Pressable>
             </View>
 
             <View>
-              <FlatList 
-              data={imageArray}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              renderItem={renderImagesJSX}
-            //   keyExtractor={item => item.id}
+              <FlatList
+                data={modalOpen?.product?.images}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                renderItem={renderImagesJSX}
               />
             </View>
 
@@ -71,10 +72,10 @@ const CustomModal = () => {
               <View>
                 <Text style={styles.productTitle}>Ladies Midi Gown</Text>
                 <View style={styles.priceContainer}>
-                  <Text style={styles.productCurr}>QAR</Text>
+                  <Text style={styles.productCurr}>{modalOpen?.product?.currency}</Text>
                   <View style={styles.currencyContainer}>
-                    <Text style={styles.productPrice}>49</Text>
-                    <Text style={styles.productDeci}>.99</Text>
+                    <Text style={styles.productPrice}>{currentPrice[0]}</Text>
+                    <Text style={styles.productDeci}>.{currentPrice[1]}</Text>
                   </View>
                 </View>
               </View>
@@ -89,43 +90,52 @@ const CustomModal = () => {
               <Text style={styles.featureDetails}>M</Text>
             </View>
             <View style={{...styles.priceContainer, marginTop: 10}}>
-              <View style={styles.sizeContainer}>
-                <Text style={styles.sizeLabel}>M</Text>
-              </View>
-              <View style={styles.sizeContainer}>
-                <Text style={styles.sizeLabel}>M</Text>
-              </View>
-              <View style={styles.sizeContainer}>
-                <Text style={styles.sizeLabel}>M</Text>
-              </View>
-              <View style={styles.sizeContainer}>
-                <Text style={styles.sizeLabel}>M</Text>
-              </View>
-              <View style={styles.sizeContainer}>
-                <Text style={styles.sizeLabel}>M</Text>
-              </View>
+              {modalOpen?.product?.availableSizes?.map((v, i) => {
+                if (size === v) {
+                  return (
+                    <View style={styles.sizeContainerSelected}>
+                      <Text style={styles.sizeLabelSelected}>{v}</Text>
+                    </View>
+                  );
+                } else {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => setSize(v)}
+                      style={styles.sizeContainer}>
+                      <Text style={styles.sizeLabel}>{v}</Text>
+                    </TouchableOpacity>
+                  );
+                }
+              })}
             </View>
 
-            <View style={{...styles.priceContainer, marginTop: 10}}>
+            <View style={{...styles.priceContainer, marginTop: 5}}>
               <Text style={styles.featureLabel}>Color:</Text>
               <Text style={styles.featureDetails}>Black</Text>
             </View>
-            <View style={{...styles.priceContainer, marginTop: 10}}>
-              <View style={styles.palateBorder}>
-                <View style={styles.colorPalate} />
-              </View>
-              <View style={styles.palateBorder}>
-                <View style={styles.colorPalate} />
-              </View>
-              <View style={styles.palateBorder}>
-                <View style={styles.colorPalate} />
-              </View>
-              <View style={styles.palateBorder}>
-                <View style={styles.colorPalate} />
-              </View>
-              <View style={styles.palateBorder}>
-                <View style={styles.colorPalate} />
-              </View>
+            <View style={{...styles.priceContainer, marginTop: 5}}>
+              {modalOpen?.product?.availableColors?.map((v, i) => {
+                if (color === v) {
+                  return (
+                    <View style={styles.palateBorderSelected}>
+                      <View
+                        style={{
+                          ...styles.colorPalateSelected,
+                          backgroundColor: v,
+                        }}
+                      />
+                    </View>
+                  );
+                } else {
+                  return (
+                    <TouchableOpacity onPress={() => setColor(v)} style={styles.palateBorder}>
+                      <View
+                        style={{...styles.colorPalate, backgroundColor: v}}
+                      />
+                    </TouchableOpacity>
+                  );
+                }
+              })}
             </View>
             <View style={styles.addToCartContainer}>
               <HeartNull width={30} height={30} />
@@ -150,9 +160,10 @@ const styles = StyleSheet.create({
     marginTop: 22,
     backgroundColor: '#00000080',
   },
-  tinyLogo:{
-    width: 200,
-    height: 100
+  productImage: {
+    width: 185,
+    height: 185,
+    marginRight: 5,
   },
   modalView: {
     margin: 20,
@@ -171,11 +182,11 @@ const styles = StyleSheet.create({
   },
   modalEmpty: {
     width: '100%',
-    height: hp('40%'),
+    height: hp('25%'),
   },
   modalWhite: {
     width: '100%',
-    height: hp('60%'),
+    height: hp('77%'),
     backgroundColor: WHITE,
     paddingHorizontal: 15,
   },
@@ -232,11 +243,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   featureLabel: {
-    fontSize: 20,
+    fontSize: 17,
     color: BLACK,
   },
   featureDetails: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '600',
     color: BLACK,
     marginLeft: 5,
@@ -247,10 +258,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
+    borderColor: '#E4E4E4',
+    marginRight: 10,
+  },
+  sizeContainerSelected: {
+    paddingHorizontal: 12,
+    height: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
     borderColor: BLACK,
     marginRight: 10,
   },
   sizeLabel: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#737373',
+  },
+  sizeLabelSelected: {
     fontSize: 18,
     fontWeight: '600',
     color: BLACK,
@@ -259,7 +284,22 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     borderRadius: 20,
-    backgroundColor: BLACK,
+  },
+  colorPalateSelected: {
+    width: 33,
+    height: 33,
+    borderRadius: 20,
+  },
+  palateBorderSelected: {
+    backgroundColor: WHITE,
+    width: 45,
+    height: 45,
+    borderRadius: 30,
+    marginRight: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: BLACK,
+    borderWidth: 3,
   },
   palateBorder: {
     backgroundColor: WHITE,
@@ -275,7 +315,7 @@ const styles = StyleSheet.create({
   addToCartContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    marginVertical: hp(3),
+    marginVertical: hp(2),
     alignItems: 'center',
   },
   addToCartStyle: {

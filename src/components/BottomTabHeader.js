@@ -5,6 +5,7 @@ import {
   StatusBar,
   TextInput,
   StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -16,15 +17,14 @@ import {globalStyles} from '../styles/globalStyles';
 import FilterIcon from '../assets/icons/filter_icon.svg';
 import SearchIcon from '../assets/icons/search_icon.svg';
 
-const BottomTabHeader = () => {
+const BottomTabHeader = ({navigation}) => {
   return (
     <View style={styles.headerContainer}>
-      <StatusBar
-        animated={true}
-        backgroundColor={APPCOLOR}
-      />
+      <StatusBar animated={true} backgroundColor={APPCOLOR} />
       <View style={styles.navigatorSection}>
-        <BackIcon width={25} height={25} />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <BackIcon width={25} height={25} />
+        </TouchableOpacity>
         <View style={{position: 'relative'}}>
           <TextInput
             placeholder="Search the Market"
@@ -47,9 +47,8 @@ const styles = StyleSheet.create({
   headerContainer: {
     width: wp('100%'),
     padding: hp(1),
-    // height: 100,
     backgroundColor: APPCOLOR,
-    ...globalStyles.boxShadow
+    ...globalStyles.boxShadow,
   },
   navigatorSection: {
     width: '100%',

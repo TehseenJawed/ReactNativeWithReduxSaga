@@ -45,6 +45,7 @@ const Layout = ({children}) => {
 
   const changeNavigation = index => {
     console.log('index', index);
+    setActiveIndex(index)
   };
 
   const categoryLabelJSX = ({item, index}) => {

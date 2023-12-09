@@ -17,14 +17,13 @@ import BottomTabHeader from '../components/BottomTabHeader.js';
 
 const Tab = createBottomTabNavigator();
 function BottomTabNavigation() {
-
   return (
     <Tab.Navigator
       initialRouteName="Auction"
       activeColor="#f0edf6"
       inactiveColor="#3e2465"
       screenOptions={({route}) => ({
-        header: () => <BottomTabHeader />,
+        header: props => <BottomTabHeader {...props} />,
         headerShown: true,
         tabBarStyle: {
           backgroundColor: '#FFFFFF',

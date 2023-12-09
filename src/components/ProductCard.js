@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -13,32 +13,65 @@ import {
 } from 'react-native-responsive-screen';
 import {WHITE, BLACK} from '../assets/colors/colors';
 import CartIcon from '../assets/icons/cart_icon.svg';
-import ProductImage from '../assets/images/product_image.png';
 import HeartNull from '../assets/icons/heart_null.svg';
-import PlusIcon from '../assets/icons/plus.svg'
-import MinusIcon from '../assets/icons/minus.svg'
+import HeartFull from '../assets/icons/heart_full.svg';
+import PlusIcon from '../assets/icons/plus.svg';
+import MinusIcon from '../assets/icons/minus.svg';
 
-const ProductCard = ({data}) => {
+const ProductCard = ({data, updateData, index, modalProps}) => {
+  const [openQuantity, setOpenQuantity] = useState(false);
+  const [favorite, setFavorite] = useState(false);
+  const [modalOpen, setModalOpen] = modalProps;
+  const currentPrice = data?.currentPrice?.split('.') || [];
+  const oldPrice = data?.oldPrice?.split('.') || [];
+  let imgSource = null;
+  if (!!data?.profileImage) {
+    imgSource = data?.profileImage;
+  }
+  const pressCart = () => {
+    if (data?.availableColors?.length == 0) {
+      setOpenQuantity(true);
+    } else {
+      setModalOpen({
+        flag: true,
+        product: data,
+      });
+    }
+  };
   return (
-    <View style={styles.productContainer}>
-      <Image style={styles.productImage} source={ProductImage} />
+    <View key={index} style={styles.productContainer}>
+      <Image style={styles.productImage} source={imgSource} />
       <TouchableOpacity style={styles.heartColor}>
-        <HeartNull width={20} height={20} />
+        {favorite ? (
+          <TouchableOpacity onPress={() => setFavorite(false)}>
+            <HeartFull width={20} height={20} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={() => setFavorite(true)}>
+            <HeartNull width={20} height={20} />
+          </TouchableOpacity>
+        )}
+        {/* <HeartNull width={20} height={20} />
+        <HeartFull width={18} height={18} /> */}
       </TouchableOpacity>
       <View style={styles.colorSelection}>
-        <View style={styles.colorPalot1} />
-        <View style={styles.colorPalot2} />
-        <View style={styles.colorPalot3} />
-        <Text style={styles.colorLeft}>2</Text>
+        {data?.availableColors?.map((v, i) => {
+          if (i <= 2) {
+            return <View style={{...styles.colorPalot, backgroundColor: v}} />;
+          } else if (i === 3) {
+            return <Text style={{color: WHITE}}>2</Text>;
+          } else {
+          }
+        })}
       </View>
       <View style={styles.productName}>
-        <Text>{data.name}</Text>
+        <Text>{data?.title}</Text>
         <View style={styles.priceContainer}>
           <View style={styles.productFeature}>
             <View style={styles.productPrice}>
-              <Text>QAR</Text>
-              <Text style={styles.productCurrent1}>49</Text>
-              <Text style={styles.productCurrent2}>.75</Text>
+              <Text>{data.currency}</Text>
+              <Text style={styles.productCurrent1}>{currentPrice[0]}</Text>
+              <Text style={styles.productCurrent2}>.{currentPrice[1]}</Text>
             </View>
             <View style={styles.productPrice}>
               <View
@@ -50,31 +83,33 @@ const ProductCard = ({data}) => {
                   top: 10,
                 }}
               />
-              <Text style={styles.productOld1}>59</Text>
-              <Text style={styles.productOld2}>.75</Text>
+              <Text style={styles.productOld1}>{oldPrice[0]}</Text>
+              <Text style={styles.productOld2}>.{oldPrice[1]}</Text>
               <View style={styles.labelContainer}>
-                <Text style={styles.labelText}>-10%</Text>
+                <Text style={styles.labelText}>-{data.percentage}%</Text>
               </View>
             </View>
           </View>
-          <View style={styles.increamentContainer}>
-            <TouchableOpacity style={styles.increamentItem}>
-              <PlusIcon width={10} height={10}/>
+          {openQuantity ? (
+            <View style={styles.increamentContainer}>
+              <TouchableOpacity style={styles.increamentItem}>
+                <PlusIcon width={10} height={10} />
+              </TouchableOpacity>
+              <TextInput
+                style={styles.inputField}
+                value={String(data?.quantity)}
+                placeholder="0"
+                keyboardType="email-address"
+              />
+              <TouchableOpacity style={styles.increamentItem}>
+                <MinusIcon width={10} height={10} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={pressCart} style={styles.productCart1}>
+              <CartIcon />
             </TouchableOpacity>
-            <TextInput
-              style={styles.inputField}
-              // onChangeText={setEmail}
-              value={'1'}
-              placeholder="Email"
-              keyboardType="email-address"
-            />
-            <TouchableOpacity style={styles.increamentItem}>
-              <MinusIcon width={10} height={10}/>
-            </TouchableOpacity>
-          </View>
-          {/* <TouchableOpacity style={styles.productCart1}>
-            <CartIcon />
-          </TouchableOpacity> */}
+          )}
         </View>
       </View>
     </View>
@@ -84,6 +119,7 @@ const ProductCard = ({data}) => {
 const styles = StyleSheet.create({
   productContainer: {
     width: wp('45%'),
+    margin: 10,
     position: 'relative',
     // height: hp(20),
   },
@@ -94,14 +130,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     borderRadius: 5,
     padding: 0,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   increamentItem: {
     backgroundColor: BLACK,
     width: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 20
+    height: 20,
   },
   operatorIcon: {
     color: WHITE,
@@ -123,10 +159,9 @@ const styles = StyleSheet.create({
     right: 5,
     top: 90,
   },
-  colorPalot1: {
+  colorPalot: {
     width: 15,
     height: 15,
-    backgroundColor: '#3F4E59',
     borderWidth: 1,
     borderColor: WHITE,
     borderRadius: 10,

@@ -7,10 +7,9 @@ import BottomTabNavigation from './bottomStack';
 const Main = createNativeStackNavigator();
 
 const MainStack = () => {
-  console.log('MAIN STACK IS WORKING......');
   return (
     <Main.Navigator
-      initialRouteName="home"
+      initialRouteName="dashboard"
       headerMode="none"
       options={{
         animationEnabled: false,

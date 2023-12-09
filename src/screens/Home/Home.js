@@ -1,24 +1,40 @@
-import React from 'react';
-import {Text, View} from 'react-native';
+import React, {useState} from 'react';
+import {Text, View, FlatList} from 'react-native';
 import ProductCard from '../../components/ProductCard';
-import ProductImage from '../../assets/images/product_image.png';
 import Modal from '../../components/Modal';
+import {productData} from '../../assets/dummy_data';
 
 const Home = () => {
-  const newObj = [
-    {
-      name: 'Mens Plain T Shirt',
-      newPrice: '40.75',
-      oldPrice: '59.75',
-      discount: '10%',
-      image: ProductImage,
-    }
-  ]
+  const [products, setProducts] = useState(productData);
+  const modalProps = useState({
+    flag: false,
+    product: {},
+  });
   return (
     <View>
-      <ProductCard data={newObj[0]} />
-      <Modal />
-      <Text>Home</Text>
+      <FlatList
+        data={products}
+        numColumns={2}
+        showsHorizontalScrollIndicator={false}
+        renderItem={({item, index}) => (
+          <ProductCard
+            data={item}
+            updateData={setProducts}
+            index={index}
+            modalProps={modalProps}
+          />
+        )}
+        keyExtractor={item => item.id}
+      />
+      {/* {products.map((v, i) => (
+        <ProductCard
+          data={v}
+          updateData={setProducts}
+          index={i}
+          modalProps={modalProps}
+        />
+      ))} */}
+      <Modal modalProps={modalProps} />
     </View>
   );
 };
